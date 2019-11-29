@@ -45,7 +45,7 @@ public class RegistrationServiceImpl implements RegistrationService {
 		/*
 		 * Checking email id is valid or not, if it is invalid then throwing exception.
 		 */
-		boolean isValid = isEmailValid(user.getEmailId());
+		boolean isValid = EmailValidator.isValid(user.getEmailId());
 		if (!isValid) {
 			throw new AccredLinkAppException(constants.INVALID_EMAIL);
 		}
@@ -110,8 +110,4 @@ public class RegistrationServiceImpl implements RegistrationService {
 		}
 	}
 
-	private boolean isEmailValid(String emailId) {
-		EmailValidator emailValidator = new EmailValidator();
-		return emailValidator.validate(emailId);
-	}
 }

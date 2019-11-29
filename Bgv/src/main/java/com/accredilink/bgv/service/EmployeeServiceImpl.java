@@ -35,13 +35,13 @@ public class EmployeeServiceImpl implements EmployeeService {
 		/*
 		 * Checking email id is valid or not, if it is invalid then throwing exception.
 		 */
-		boolean isValid = isEmailValid(employee.getEmailId());
+		boolean isValid = EmailValidator.isValid(employee.getEmailId());
 		if (!isValid) {
 			throw new AccredLinkAppException(constants.INVALID_EMAIL);
 		}
 		try {
 			employee.setCreatedBy(employee.getEmailId());
-			employee.setActive("active");
+			employee.setActive("S");
 			employee = employeeRepository.save(employee);
 			if (employee != null) {
 				return ResponseObject.constructResponse(constants.EMPLOYEE_CREATE_SUCCESS, 1);
@@ -60,7 +60,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 		try {
 			savedEmployee=employeeRepository.findById(employeeId);
 			if(savedEmployee!=null) {
-				savedEmployee.get().setActive("deactive");
+				savedEmployee.get().setActive("N");
 				employeeRepository.save(savedEmployee.get());
 				return ResponseObject.constructResponse("Employee Deleted Successfully", 1);
 			}
@@ -77,11 +77,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<Employee> getAllEmployees() {
 		return employeeRepository.findAll();
-	}
-
-	private boolean isEmailValid(String emailId) {
-		EmailValidator emailValidator = new EmailValidator();
-		return emailValidator.validate(emailId);
 	}
 
 }

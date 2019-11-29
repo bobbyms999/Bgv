@@ -12,8 +12,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.accredilink.bgv.entity.Agency;
+import com.accredilink.bgv.entity.Discipline;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.repository.AgencyRepository;
+import com.accredilink.bgv.repository.DisciplineRepository;
 import com.accredilink.bgv.service.EmployeeService;
 import com.accredilink.bgv.util.ResponseObject;
 
@@ -27,7 +29,10 @@ public class EmployeeController {
 
 	@Autowired
 	private AgencyRepository agencyRepository;
-	
+
+	@Autowired
+	private DisciplineRepository designationRepository;
+
 	@PostMapping("/create")
 	public ResponseObject createEmployee(@RequestBody Employee employee) {
 		return employeeService.create(employee);
@@ -42,9 +47,15 @@ public class EmployeeController {
 	public List<Employee> fetchAllEmployees() {
 		return employeeService.getAllEmployees();
 	}
-	
+
 	@GetMapping("/fetchallagencies")
 	public List<Agency> fetchAllAgencies() {
 		return agencyRepository.findAll();
 	}
+
+	@GetMapping("/fetchalldesignations")
+	public List<Discipline> fetchAllDesignations() {
+		return designationRepository.findAll();
+	}
+
 }

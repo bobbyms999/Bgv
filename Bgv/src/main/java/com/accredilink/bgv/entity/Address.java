@@ -37,98 +37,122 @@ public class Address {
 	private String country;
 	@Column(name = "ZIP")
 	private int zip;
-	
+
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
 	private LocalDate createdDate;
-	
+
 	@LastModifiedDate
 	@Column(name = "MODIFIED_DATE")
 	private LocalDate modifiedDate;
-	
+
 	@CreatedBy
 	@Column(name = "CREATED_BY")
 	private String createdBy;
-	
+
 	@LastModifiedBy
 	@Column(name = "MODIFIED_BY")
 	private String modifiedBy;
-	
+
 	@Column(name = "ACTIVE")
 	private boolean active;
-	
+
 	public int getAddressId() {
 		return addressId;
 	}
+
 	public void setAddressId(int addressId) {
 		this.addressId = addressId;
 	}
+
 	public String getAddressLine1() {
 		return addressLine1;
 	}
+
 	public void setAddressLine1(String addressLine1) {
 		this.addressLine1 = addressLine1;
 	}
+
 	public String getAddressLine2() {
 		return addressLine2;
 	}
+
 	public void setAddressLine2(String addressLine2) {
 		this.addressLine2 = addressLine2;
 	}
+
 	public String getCity() {
 		return city;
 	}
+
 	public void setCity(String city) {
 		this.city = city;
 	}
+
 	public String getState() {
 		return state;
 	}
+
 	public void setState(String state) {
 		this.state = state;
 	}
+
 	public String getCountry() {
 		return country;
 	}
+
 	public void setCountry(String country) {
 		this.country = country;
 	}
+
 	public int getZip() {
 		return zip;
 	}
+
 	public void setZip(int zip) {
 		this.zip = zip;
 	}
+
 	public LocalDate getCreatedDate() {
 		return createdDate;
 	}
+
 	public void setCreatedDate(LocalDate createdDate) {
 		this.createdDate = createdDate;
 	}
+
 	public LocalDate getModifiedDate() {
 		return modifiedDate;
 	}
+
 	public void setModifiedDate(LocalDate modifiedDate) {
 		this.modifiedDate = modifiedDate;
 	}
+
 	public String getCreatedBy() {
 		return createdBy;
 	}
+
 	public void setCreatedBy(String createdBy) {
 		this.createdBy = createdBy;
 	}
+
 	public String getModifiedBy() {
 		return modifiedBy;
 	}
+
 	public void setModifiedBy(String modifiedBy) {
 		this.modifiedBy = modifiedBy;
 	}
+
 	public boolean isActive() {
 		return active;
 	}
+
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -147,6 +171,7 @@ public class Address {
 		result = prime * result + zip;
 		return result;
 	}
+
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
@@ -209,4 +234,13 @@ public class Address {
 			return false;
 		return true;
 	}
+
+	@Override
+	public String toString() {
+		return "Address [addressId=" + addressId + ", addressLine1=" + addressLine1 + ", addressLine2=" + addressLine2
+				+ ", city=" + city + ", state=" + state + ", country=" + country + ", zip=" + zip + ", createdDate="
+				+ createdDate + ", modifiedDate=" + modifiedDate + ", createdBy=" + createdBy + ", modifiedBy="
+				+ modifiedBy + ", active=" + active + "]";
+	}
+
 }

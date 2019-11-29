@@ -29,7 +29,7 @@ public class Agency {
 	private String agencyName;
 	@Column(name = "EIN")
 	private Long ein;
-	
+
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
 	private LocalDate createdDate;
@@ -112,9 +112,73 @@ public class Agency {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
 
-	
-	
-	
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + (active ? 1231 : 1237);
+		result = prime * result + agencyId;
+		result = prime * result + ((agencyName == null) ? 0 : agencyName.hashCode());
+		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
+		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
+		result = prime * result + ((ein == null) ? 0 : ein.hashCode());
+		result = prime * result + ((modifiedBy == null) ? 0 : modifiedBy.hashCode());
+		result = prime * result + ((modifiedDate == null) ? 0 : modifiedDate.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Agency other = (Agency) obj;
+		if (active != other.active)
+			return false;
+		if (agencyId != other.agencyId)
+			return false;
+		if (agencyName == null) {
+			if (other.agencyName != null)
+				return false;
+		} else if (!agencyName.equals(other.agencyName))
+			return false;
+		if (createdBy == null) {
+			if (other.createdBy != null)
+				return false;
+		} else if (!createdBy.equals(other.createdBy))
+			return false;
+		if (createdDate == null) {
+			if (other.createdDate != null)
+				return false;
+		} else if (!createdDate.equals(other.createdDate))
+			return false;
+		if (ein == null) {
+			if (other.ein != null)
+				return false;
+		} else if (!ein.equals(other.ein))
+			return false;
+		if (modifiedBy == null) {
+			if (other.modifiedBy != null)
+				return false;
+		} else if (!modifiedBy.equals(other.modifiedBy))
+			return false;
+		if (modifiedDate == null) {
+			if (other.modifiedDate != null)
+				return false;
+		} else if (!modifiedDate.equals(other.modifiedDate))
+			return false;
+		return true;
+	}
+
+	@Override
+	public String toString() {
+		return "Agency [agencyId=" + agencyId + ", agencyName=" + agencyName + ", ein=" + ein + ", createdDate="
+				+ createdDate + ", modifiedDate=" + modifiedDate + ", createdBy=" + createdBy + ", modifiedBy="
+				+ modifiedBy + ", active=" + active + "]";
+	}
+
 }
