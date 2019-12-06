@@ -21,12 +21,13 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Alias {
 
-	@Id
-	@Column(name = "ALIAS_ID", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	
 	private int aliasId;
-	@Column(name = "ALIAS_NAME")
-	private String aliasName;
+	@Column(name = "ALIAS_NAME_FOR",length = 15)
+	private String aliasNameFor;
+	
+	@Column(name = "ALIAS_NAMES_GENERAL")
+	private String aliasNamesGeneral;
 
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
@@ -47,6 +48,9 @@ public class Alias {
 	@Column(name = "ACTIVE")
 	private boolean active;
 
+	@Id
+	@Column(name = "ALIAS_ID", nullable = false)
+	@GeneratedValue
 	public int getAliasId() {
 		return aliasId;
 	}
@@ -55,12 +59,20 @@ public class Alias {
 		this.aliasId = aliasId;
 	}
 
-	public String getAliasName() {
-		return aliasName;
+	public String getAliasNameFor() {
+		return aliasNameFor;
 	}
 
-	public void setAliasName(String aliasName) {
-		this.aliasName = aliasName;
+	public void setAliasNameFor(String aliasNameFor) {
+		this.aliasNameFor = aliasNameFor;
+	}
+
+	public String getAliasNamesGeneral() {
+		return aliasNamesGeneral;
+	}
+
+	public void setAliasNamesGeneral(String aliasNamesGeneral) {
+		this.aliasNamesGeneral = aliasNamesGeneral;
 	}
 
 	public LocalDate getCreatedDate() {
@@ -109,7 +121,8 @@ public class Alias {
 		int result = 1;
 		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + aliasId;
-		result = prime * result + ((aliasName == null) ? 0 : aliasName.hashCode());
+		result = prime * result + ((aliasNameFor == null) ? 0 : aliasNameFor.hashCode());
+		result = prime * result + ((aliasNamesGeneral == null) ? 0 : aliasNamesGeneral.hashCode());
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
 		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
 		result = prime * result + ((modifiedBy == null) ? 0 : modifiedBy.hashCode());
@@ -130,10 +143,15 @@ public class Alias {
 			return false;
 		if (aliasId != other.aliasId)
 			return false;
-		if (aliasName == null) {
-			if (other.aliasName != null)
+		if (aliasNameFor == null) {
+			if (other.aliasNameFor != null)
 				return false;
-		} else if (!aliasName.equals(other.aliasName))
+		} else if (!aliasNameFor.equals(other.aliasNameFor))
+			return false;
+		if (aliasNamesGeneral == null) {
+			if (other.aliasNamesGeneral != null)
+				return false;
+		} else if (!aliasNamesGeneral.equals(other.aliasNamesGeneral))
 			return false;
 		if (createdBy == null) {
 			if (other.createdBy != null)
@@ -160,9 +178,10 @@ public class Alias {
 
 	@Override
 	public String toString() {
-		return "Alias [aliasId=" + aliasId + ", aliasName=" + aliasName + ", createdDate=" + createdDate
-				+ ", modifiedDate=" + modifiedDate + ", createdBy=" + createdBy + ", modifiedBy=" + modifiedBy
-				+ ", active=" + active + "]";
+		return "Alias [aliasId=" + aliasId + ", aliasNameFor=" + aliasNameFor + ", aliasNamesGeneral="
+				+ aliasNamesGeneral + ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", createdBy="
+				+ createdBy + ", modifiedBy=" + modifiedBy + ", active=" + active + "]";
 	}
 
+	
 }

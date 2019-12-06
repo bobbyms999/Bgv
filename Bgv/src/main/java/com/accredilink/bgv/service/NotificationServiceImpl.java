@@ -11,7 +11,6 @@ import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
 import com.accredilink.bgv.exception.AccredLinkAppException;
-import com.accredilink.bgv.util.Constants;
 
 @Service
 public class NotificationServiceImpl implements NotificationService {
@@ -20,9 +19,6 @@ public class NotificationServiceImpl implements NotificationService {
 
 	@Autowired
 	private JavaMailSender mailSender;
-
-	@Autowired
-	private Constants constants;
 
 	@Value("${spring.mail.username}")
 	String userMailFrom;

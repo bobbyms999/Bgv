@@ -10,8 +10,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.accredilink.bgv.entity.Agency;
 import com.accredilink.bgv.entity.Employee;
+import com.accredilink.bgv.entity.EmployeeAgency;
 import com.accredilink.bgv.exception.AccredLinkAppException;
+import com.accredilink.bgv.repository.AgencyRepository;
 import com.accredilink.bgv.repository.EmployeeRepository;
 import com.accredilink.bgv.util.Constants;
 import com.accredilink.bgv.util.EmailValidator;
@@ -28,20 +31,44 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private Constants constants;
 
+	@Autowired
+	private AgencyRepository agencyRepository;
+
 	@Override
 	@Transactional
-	public ResponseObject create(Employee employee) {
+	public ResponseObject create(EmployeeAgency employeeAgency) {
 
-		/*
-		 * Checking email id is valid or not, if it is invalid then throwing exception.
-		 */
-		boolean isValid = EmailValidator.isValid(employee.getEmailId());
-		if (!isValid) {
-			throw new AccredLinkAppException(constants.INVALID_EMAIL);
-		}
 		try {
-			employee.setCreatedBy(employee.getEmailId());
+			Employee employee = employeeAgency.getEmployee();
+			Agency agency;
+
+			/*
+			 * Checking email id is valid or not, if it is invalid then throwing exception.
+			 */
+			if (employee.getEmailId() != null) {
+				boolean isValid = EmailValidator.isValid(employee.getEmailId());
+				if (!isValid) {
+					throw new AccredLinkAppException(constants.INVALID_EMAIL);
+				}
+			}
+			employee.setCreatedBy(employee.getFirstName());
 			employee.setActive("S");
+			EmployeeAgency newEmployeeAgency = new EmployeeAgency();
+			if (employeeAgency.getAgency() != null) {
+				agency = employeeAgency.getAgency();
+				Optional<Agency> existingAgency = agencyRepository.findByAgencyName(agency.getAgencyName());
+				if (existingAgency.isPresent()) {
+					newEmployeeAgency.setAgency(existingAgency.get());
+				} else {
+					agencyRepository.save(agency);
+					newEmployeeAgency.setAgency(agency);
+				}
+				newEmployeeAgency.setEmployee(employee);
+				newEmployeeAgency.setBgStatus(employeeAgency.getBgStatus());
+				employee.addEmployeeAgency(newEmployeeAgency);
+			} else {
+				employee.addEmployeeAgency(null);
+			}
 			employee = employeeRepository.save(employee);
 			if (employee != null) {
 				return ResponseObject.constructResponse(constants.EMPLOYEE_CREATE_SUCCESS, 1);
@@ -58,13 +85,12 @@ public class EmployeeServiceImpl implements EmployeeService {
 	public ResponseObject delete(int employeeId) {
 		Optional<Employee> savedEmployee;
 		try {
-			savedEmployee=employeeRepository.findById(employeeId);
-			if(savedEmployee!=null) {
+			savedEmployee = employeeRepository.findById(employeeId);
+			if (savedEmployee != null) {
 				savedEmployee.get().setActive("N");
 				employeeRepository.save(savedEmployee.get());
 				return ResponseObject.constructResponse("Employee Deleted Successfully", 1);
-			}
-			else {
+			} else {
 				return ResponseObject.constructResponse("Unable to delete the Employee", 0);
 			}
 		} catch (Exception e) {

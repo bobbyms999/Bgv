@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
+import org.hibernate.validator.constraints.Length;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
@@ -20,39 +21,34 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class User {
 
-	@Id
-	@Column(name = "USER_ID", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int userId;
-	@Column(name = "USER_NAME")
+	@Column(name = "USER_NAME", length = 12)
 	private String userName;
-	@Column(name = "PASSWORD")
+	@Column(name = "PASSWORD", length = 12)
 	private String password;
-	@Column(name = "FIRST_NAME")
+	@Column(name = "FIRST_NAME", length = 15)
 	private String firstName;
-	@Column(name = "LAST_NAME")
+	@Column(name = "LAST_NAME", length = 20)
 	private String lastName;
 	@Column(name = "DATE_OF_BIRTH")
 	private LocalDate dateOfBirth;
 	@Column(name = "EMAIL_ID")
 	private String emailId;
-	@Column(name = "SSN_NUMBER")
+	@Column(name = "SSN_NUMBER", length = 15)
 	private String ssnNumber;
 	@Column(name = "PHONE_NUMBER")
 	private Long phoneNumber;
-	@Column(name = "TYPE")
+	@Column(name = "TYPE", length = 15)
 	private String type;
 	@Column(name = "TOKEN_NUMER")
 	private String tokenNumer;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "ADDRESS_ID")
 	private Address address;
-
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "AGENCY_ID")
 	private Agency agency;
 
+	@Id
+	@Column(name = "USER_ID", nullable = false)
+	@GeneratedValue
 	public int getUserId() {
 		return userId;
 	}
@@ -141,6 +137,7 @@ public class User {
 		this.tokenNumer = tokenNumer;
 	}
 
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
 	public Address getAddress() {
 		return address;
 	}
@@ -149,6 +146,7 @@ public class User {
 		this.address = address;
 	}
 
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = Agency.class)
 	public Agency getAgency() {
 		return agency;
 	}
@@ -258,9 +256,5 @@ public class User {
 				+ ", ssnNumber=" + ssnNumber + ", phoneNumber=" + phoneNumber + ", type=" + type + ", tokenNumer="
 				+ tokenNumer + ", address=" + address + ", agency=" + agency + "]";
 	}
-	
-	
 
-	
-	
-	}
+}

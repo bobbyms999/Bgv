@@ -1,7 +1,9 @@
 package com.accredilink.bgv.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -9,11 +11,9 @@ import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
+import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -26,20 +26,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "ACCRLNK_EMPLOYEE")
 @EntityListeners(AuditingEntityListener.class)
-public class Employee {
+public class Employee implements Serializable {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "EMPLOYEE_ID", nullable = false)
 	private int employeeId;
-
-	@Column(name = "FIRST_NAME")
+	@Column(name = "FIRST_NAME", length = 15)
 	private String firstName;
 
-	@Column(name = "LAST_NAME")
+	@Column(name = "LAST_NAME", length = 20)
 	private String lastName;
 
-	@Column(name = "MIDDLE_NAME")
+	@Column(name = "MIDDLE_NAME", length = 15)
 	private String middleName;
 
 	@Column(name = "DATE_OF_BIRTH")
@@ -48,25 +44,20 @@ public class Employee {
 	@Column(name = "EMAIL_ID")
 	private String emailId;
 
-	@Column(name = "SSN_NUMBER")
+	@Column(name = "SSN_NUMBER", length = 15)
 	private String ssnNumber;
 
-	@ManyToMany(fetch = FetchType.LAZY)
-	@JoinTable(name = "ACCRLNK_EMPLOYEE_AGENCY", joinColumns = {
-			@JoinColumn(name = "EMPLOYEE_ID") }, inverseJoinColumns = { @JoinColumn(name = "AGENCY_ID") })
-	private List<Agency> agency;
-
-	@OneToOne(cascade = CascadeType.MERGE)
-	@JoinColumn(name = "DISCIPLINE_ID")
 	private Discipline discipline;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "ADDRESS_ID")
 	private Address address;
 
-	@OneToOne(cascade = CascadeType.ALL)
-	@JoinColumn(name = "ALIAS_ID")
-	private Alias alias;
+	@Column(name = "ALIAS_SPECIFIC", length = 15)
+	private String aliasSpecific;
+
+	@Column(name = "MAIDEN_NAME", length = 15)
+	private String maidenName;
+
+	private Set<EmployeeAgency> employeeAgency = new HashSet<EmployeeAgency>();
 
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
@@ -87,12 +78,23 @@ public class Employee {
 	@Column(name = "ACTIVE")
 	private String active;
 
+	@Id
+	@GeneratedValue
+	@Column(name = "EMPLOYEE_ID", nullable = false)
 	public int getEmployeeId() {
 		return employeeId;
 	}
 
 	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
+	}
+
+	public String getMaidenName() {
+		return maidenName;
+	}
+
+	public void setMaidenName(String maidenName) {
+		this.maidenName = maidenName;
 	}
 
 	public String getFirstName() {
@@ -143,14 +145,16 @@ public class Employee {
 		this.ssnNumber = ssnNumber;
 	}
 
-	public List<Agency> getAgency() {
-		return agency;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.employee", cascade = CascadeType.ALL)
+	public Set<EmployeeAgency> getEmployeeAgency() {
+		return employeeAgency;
 	}
 
-	public void setAgency(List<Agency> agency) {
-		this.agency = agency;
+	public void setEmployeeAgency(Set<EmployeeAgency> employeeAgency) {
+		this.employeeAgency = employeeAgency;
 	}
 
+	@OneToOne(cascade = CascadeType.MERGE, targetEntity = Discipline.class)
 	public Discipline getDiscipline() {
 		return discipline;
 	}
@@ -159,6 +163,7 @@ public class Employee {
 		this.discipline = discipline;
 	}
 
+	@OneToOne(cascade = CascadeType.ALL, targetEntity = Address.class)
 	public Address getAddress() {
 		return address;
 	}
@@ -167,12 +172,12 @@ public class Employee {
 		this.address = address;
 	}
 
-	public Alias getAlias() {
-		return alias;
+	public String getAliasSpecific() {
+		return aliasSpecific;
 	}
 
-	public void setAlias(Alias alias) {
-		this.alias = alias;
+	public void setAliasSpecific(String aliasSpecific) {
+		this.aliasSpecific = aliasSpecific;
 	}
 
 	public LocalDate getCreatedDate() {
@@ -215,125 +220,7 @@ public class Employee {
 		this.active = active;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + ((active == null) ? 0 : active.hashCode());
-		result = prime * result + ((address == null) ? 0 : address.hashCode());
-		result = prime * result + ((agency == null) ? 0 : agency.hashCode());
-		result = prime * result + ((alias == null) ? 0 : alias.hashCode());
-		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
-		result = prime * result + ((dateOfBirth == null) ? 0 : dateOfBirth.hashCode());
-		result = prime * result + ((discipline == null) ? 0 : discipline.hashCode());
-		result = prime * result + ((emailId == null) ? 0 : emailId.hashCode());
-		result = prime * result + employeeId;
-		result = prime * result + ((firstName == null) ? 0 : firstName.hashCode());
-		result = prime * result + ((lastName == null) ? 0 : lastName.hashCode());
-		result = prime * result + ((middleName == null) ? 0 : middleName.hashCode());
-		result = prime * result + ((modifiedBy == null) ? 0 : modifiedBy.hashCode());
-		result = prime * result + ((modifiedDate == null) ? 0 : modifiedDate.hashCode());
-		result = prime * result + ((ssnNumber == null) ? 0 : ssnNumber.hashCode());
-		return result;
+	public void addEmployeeAgency(EmployeeAgency employeeAgency) {
+		this.employeeAgency.add(employeeAgency);
 	}
-
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Employee other = (Employee) obj;
-		if (active == null) {
-			if (other.active != null)
-				return false;
-		} else if (!active.equals(other.active))
-			return false;
-		if (address == null) {
-			if (other.address != null)
-				return false;
-		} else if (!address.equals(other.address))
-			return false;
-		if (agency == null) {
-			if (other.agency != null)
-				return false;
-		} else if (!agency.equals(other.agency))
-			return false;
-		if (alias == null) {
-			if (other.alias != null)
-				return false;
-		} else if (!alias.equals(other.alias))
-			return false;
-		if (createdBy == null) {
-			if (other.createdBy != null)
-				return false;
-		} else if (!createdBy.equals(other.createdBy))
-			return false;
-		if (createdDate == null) {
-			if (other.createdDate != null)
-				return false;
-		} else if (!createdDate.equals(other.createdDate))
-			return false;
-		if (dateOfBirth == null) {
-			if (other.dateOfBirth != null)
-				return false;
-		} else if (!dateOfBirth.equals(other.dateOfBirth))
-			return false;
-		if (discipline == null) {
-			if (other.discipline != null)
-				return false;
-		} else if (!discipline.equals(other.discipline))
-			return false;
-		if (emailId == null) {
-			if (other.emailId != null)
-				return false;
-		} else if (!emailId.equals(other.emailId))
-			return false;
-		if (employeeId != other.employeeId)
-			return false;
-		if (firstName == null) {
-			if (other.firstName != null)
-				return false;
-		} else if (!firstName.equals(other.firstName))
-			return false;
-		if (lastName == null) {
-			if (other.lastName != null)
-				return false;
-		} else if (!lastName.equals(other.lastName))
-			return false;
-		if (middleName == null) {
-			if (other.middleName != null)
-				return false;
-		} else if (!middleName.equals(other.middleName))
-			return false;
-		if (modifiedBy == null) {
-			if (other.modifiedBy != null)
-				return false;
-		} else if (!modifiedBy.equals(other.modifiedBy))
-			return false;
-		if (modifiedDate == null) {
-			if (other.modifiedDate != null)
-				return false;
-		} else if (!modifiedDate.equals(other.modifiedDate))
-			return false;
-		if (ssnNumber == null) {
-			if (other.ssnNumber != null)
-				return false;
-		} else if (!ssnNumber.equals(other.ssnNumber))
-			return false;
-		return true;
-	}
-
-	@Override
-	public String toString() {
-		return "Employee [employeeId=" + employeeId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", middleName=" + middleName + ", dateOfBirth=" + dateOfBirth + ", emailId=" + emailId
-				+ ", ssnNumber=" + ssnNumber + ", agency=" + agency + ", discipline=" + discipline + ", address="
-				+ address + ", alias=" + alias + ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate
-				+ ", createdBy=" + createdBy + ", modifiedBy=" + modifiedBy + ", active=" + active + "]";
-	}
-
 }

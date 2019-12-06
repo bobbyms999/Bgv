@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.accredilink.bgv.component.ExcelMapper;
+import com.accredilink.bgv.entity.Alias;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.repository.EmployeeRepository;
 import com.accredilink.bgv.util.ResponseObject;
@@ -27,26 +28,28 @@ public class FileUploadServiceImpl implements FileUploadService {
 	public ResponseObject uploadEmployeeSheet(MultipartFile file) {
 
 		if (file.isEmpty()) {
-			return ResponseObject.constructResponse("File is Empty", 0);
+			return ResponseObject.constructResponse("File is Empty Please upload the file again", 0);
 		}
 		List<Employee> employees = (List<Employee>) excelMapper.mapToObject(file, Employee.class);
-		if(employees!=null) {
-		employees.forEach(employee -> {
-			System.out.println(employee);
-		});
-		}
 
-		/*
-		 * employees.forEach(saveEmployee->{employeeRepository.save(saveEmployee);}); if
-		 * (!(employees.isEmpty())) { return
-		 * ResponseObject.constructResponse("File stored in db", 1); }
-		 */ return ResponseObject.constructResponse("unable to store in db", 0);
+		List<Employee> savedEmployees = employeeRepository.saveAll(employees);
+		if (!(savedEmployees.isEmpty())) {
+			return ResponseObject.constructResponse("File stored successfully", 1);
+		}
+		return ResponseObject.constructResponse("Unable to store the File", 0);
 	}
 
 	@Override
 	public ResponseObject uploadAliasNamesSheet(MultipartFile file) {
-		// TODO Auto-generated method stub
-		return null;
-	}
+		if (file.isEmpty()) {
+			return ResponseObject.constructResponse("uploadAliasNamesSheet", 0);
+		}
+		List<String> success = (List<String>) excelMapper.mapToObject(file, Alias.class);
 
+		if (success != null) {
+			return ResponseObject.constructResponse("Successfully alias names are updated", 1);
+		} else {
+			return ResponseObject.constructResponse("Error Occured while saving the alias names ", 0);
+		}
+	}
 }

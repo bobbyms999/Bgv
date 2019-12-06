@@ -21,19 +21,16 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @EntityListeners(AuditingEntityListener.class)
 public class Address {
 
-	@Id
-	@Column(name = "ADDRESS_ID", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int addressId;
-	@Column(name = "ADDRESSLINE1")
+	@Column(name = "ADDRESSLINE1",length = 50)
 	private String addressLine1;
-	@Column(name = "ADDRESS_LINE2")
+	@Column(name = "ADDRESS_LINE2",length = 50)
 	private String addressLine2;
-	@Column(name = "CITY")
+	@Column(name = "CITY",length = 20)
 	private String city;
-	@Column(name = "STATE")
+	@Column(name = "STATE",length = 15)
 	private String state;
-	@Column(name = "COUNTRY")
+	@Column(name = "COUNTRY",length = 15)
 	private String country;
 	@Column(name = "ZIP")
 	private int zip;
@@ -57,6 +54,9 @@ public class Address {
 	@Column(name = "ACTIVE")
 	private boolean active;
 
+	@Id
+	@Column(name = "ADDRESS_ID", nullable = false)
+	@GeneratedValue
 	public int getAddressId() {
 		return addressId;
 	}

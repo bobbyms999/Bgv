@@ -1,13 +1,18 @@
 package com.accredilink.bgv.entity;
 
+import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -19,16 +24,15 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "ACCRLNK_AGENCY")
 @EntityListeners(AuditingEntityListener.class)
-public class Agency {
+public class Agency implements Serializable{
 
-	@Id
-	@Column(name = "AGENCY_ID", nullable = false)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private int agencyId;
-	@Column(name = "AGENCY_NAME")
+	@Column(name = "AGENCY_NAME", length = 15)
 	private String agencyName;
 	@Column(name = "EIN")
 	private Long ein;
+
+	private Set<EmployeeAgency> employeeAgency = new HashSet<EmployeeAgency>();
 
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
@@ -49,6 +53,9 @@ public class Agency {
 	@Column(name = "ACTIVE")
 	private boolean active;
 
+	@Id
+	@Column(name = "AGENCY_ID", nullable = false)
+	@GeneratedValue
 	public int getAgencyId() {
 		return agencyId;
 	}
@@ -113,72 +120,17 @@ public class Agency {
 		this.active = active;
 	}
 
-	@Override
-	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
-		result = prime * result + (active ? 1231 : 1237);
-		result = prime * result + agencyId;
-		result = prime * result + ((agencyName == null) ? 0 : agencyName.hashCode());
-		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
-		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
-		result = prime * result + ((ein == null) ? 0 : ein.hashCode());
-		result = prime * result + ((modifiedBy == null) ? 0 : modifiedBy.hashCode());
-		result = prime * result + ((modifiedDate == null) ? 0 : modifiedDate.hashCode());
-		return result;
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.agency", cascade=CascadeType.ALL)
+	public Set<EmployeeAgency> getEmployeeAgency() {
+		return employeeAgency;
 	}
 
-	@Override
-	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Agency other = (Agency) obj;
-		if (active != other.active)
-			return false;
-		if (agencyId != other.agencyId)
-			return false;
-		if (agencyName == null) {
-			if (other.agencyName != null)
-				return false;
-		} else if (!agencyName.equals(other.agencyName))
-			return false;
-		if (createdBy == null) {
-			if (other.createdBy != null)
-				return false;
-		} else if (!createdBy.equals(other.createdBy))
-			return false;
-		if (createdDate == null) {
-			if (other.createdDate != null)
-				return false;
-		} else if (!createdDate.equals(other.createdDate))
-			return false;
-		if (ein == null) {
-			if (other.ein != null)
-				return false;
-		} else if (!ein.equals(other.ein))
-			return false;
-		if (modifiedBy == null) {
-			if (other.modifiedBy != null)
-				return false;
-		} else if (!modifiedBy.equals(other.modifiedBy))
-			return false;
-		if (modifiedDate == null) {
-			if (other.modifiedDate != null)
-				return false;
-		} else if (!modifiedDate.equals(other.modifiedDate))
-			return false;
-		return true;
+	public void setEmployeeAgency(Set<EmployeeAgency> employeeAgency) {
+		this.employeeAgency = employeeAgency;
 	}
 
-	@Override
-	public String toString() {
-		return "Agency [agencyId=" + agencyId + ", agencyName=" + agencyName + ", ein=" + ein + ", createdDate="
-				+ createdDate + ", modifiedDate=" + modifiedDate + ", createdBy=" + createdBy + ", modifiedBy="
-				+ modifiedBy + ", active=" + active + "]";
+	public void addEmployeeAgency(EmployeeAgency employeeAgency) {
+		this.employeeAgency.add(employeeAgency);
 	}
 
 }

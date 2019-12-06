@@ -7,5 +7,5 @@ import com.accredilink.bgv.entity.Employee;
 
 @Repository
 public interface EmployeeRepository extends JpaRepository<Employee, Integer> {
-	
+
 }

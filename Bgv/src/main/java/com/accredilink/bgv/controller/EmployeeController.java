@@ -11,11 +11,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.accredilink.bgv.component.DisciplineDataLoading;
 import com.accredilink.bgv.entity.Agency;
 import com.accredilink.bgv.entity.Discipline;
 import com.accredilink.bgv.entity.Employee;
+import com.accredilink.bgv.entity.EmployeeAgency;
 import com.accredilink.bgv.repository.AgencyRepository;
-import com.accredilink.bgv.repository.DisciplineRepository;
 import com.accredilink.bgv.service.EmployeeService;
 import com.accredilink.bgv.util.ResponseObject;
 
@@ -31,11 +32,11 @@ public class EmployeeController {
 	private AgencyRepository agencyRepository;
 
 	@Autowired
-	private DisciplineRepository designationRepository;
+	private DisciplineDataLoading disciplineDataLoading;
 
 	@PostMapping("/create")
-	public ResponseObject createEmployee(@RequestBody Employee employee) {
-		return employeeService.create(employee);
+	public ResponseObject createEmployee(@RequestBody EmployeeAgency employeeAgency) {
+		return employeeService.create(employeeAgency);
 	}
 
 	@GetMapping("/delete/{employeeId}")
@@ -53,9 +54,8 @@ public class EmployeeController {
 		return agencyRepository.findAll();
 	}
 
-	@GetMapping("/fetchalldesignations")
-	public List<Discipline> fetchAllDesignations() {
-		return designationRepository.findAll();
+	@GetMapping("/fetchalldisciplines")
+	public List<Discipline> fetchAllDisciplines() {
+		return disciplineDataLoading.fetchAllDisciplines();
 	}
-
 }

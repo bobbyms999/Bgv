@@ -1,6 +1,7 @@
 package com.accredilink.bgv.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -12,6 +13,7 @@ import com.accredilink.bgv.util.ResponseObject;
 
 @RestController
 @RequestMapping("/file")
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class FileUploadController {
 
 	@Autowired
@@ -26,6 +28,4 @@ public class FileUploadController {
 	public ResponseObject uploadAliasNames(@RequestParam("file") MultipartFile file) {
 		return fileUploadService.uploadAliasNamesSheet(file);
 	}
-
-	
 }

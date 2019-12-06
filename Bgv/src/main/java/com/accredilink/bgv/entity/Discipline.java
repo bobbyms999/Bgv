@@ -19,15 +19,11 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Entity
 @Table(name = "ACCRLNK_DISCIPLINE")
 @EntityListeners(AuditingEntityListener.class)
-
 public class Discipline {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
-	@Column(name = "DISCIPLINE_ID", nullable = false)
 	private int disciplineId;
 
-	@Column(name = "DISCIPLINE_VALUE",nullable = false)
+	@Column(name = "DISCIPLINE_VALUE")
 	private String disciplineValue;
 
 	@CreatedDate
@@ -47,8 +43,11 @@ public class Discipline {
 	private String modifiedBy;
 
 	@Column(name = "ACTIVE")
-	private String active;
+	private boolean active;
 
+	@Id
+	@GeneratedValue
+	@Column(name = "DISCIPLINE_ID", nullable = false)
 	public int getDisciplineId() {
 		return disciplineId;
 	}
@@ -97,19 +96,22 @@ public class Discipline {
 		this.modifiedBy = modifiedBy;
 	}
 
-	public String getActive() {
+	public boolean isActive() {
 		return active;
 	}
 
-	public void setActive(String active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 
+	
+	
+	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((active == null) ? 0 : active.hashCode());
+		result = prime * result + (active ? 1231 : 1237);
 		result = prime * result + ((createdBy == null) ? 0 : createdBy.hashCode());
 		result = prime * result + ((createdDate == null) ? 0 : createdDate.hashCode());
 		result = prime * result + disciplineId;
@@ -128,10 +130,7 @@ public class Discipline {
 		if (getClass() != obj.getClass())
 			return false;
 		Discipline other = (Discipline) obj;
-		if (active == null) {
-			if (other.active != null)
-				return false;
-		} else if (!active.equals(other.active))
+		if (active != other.active)
 			return false;
 		if (createdBy == null) {
 			if (other.createdBy != null)
@@ -170,4 +169,5 @@ public class Discipline {
 				+ modifiedBy + ", active=" + active + "]";
 	}
 
+	
 }
