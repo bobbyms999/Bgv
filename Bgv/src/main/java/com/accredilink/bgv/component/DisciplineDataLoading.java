@@ -12,9 +12,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.accredilink.bgv.entity.Alias;
+import com.accredilink.bgv.entity.DataFeedEmployee;
 import com.accredilink.bgv.entity.Discipline;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.repository.AliasRepository;
+import com.accredilink.bgv.repository.DataFeedEmployeeRepo;
 import com.accredilink.bgv.repository.DisciplineRepository;
 import com.accredilink.bgv.repository.EmployeeRepository;
 
@@ -29,6 +31,9 @@ public class DisciplineDataLoading {
 
 	@Autowired
 	AliasRepository aliasRepository;
+	
+	@Autowired
+	DataFeedEmployeeRepo dataFeedEmployeeRepo;
 
 	private final Map<String, Integer> dataMap = new HashMap<String, Integer>();
 	private List<Discipline> disciplines;
@@ -55,6 +60,10 @@ public class DisciplineDataLoading {
 
 	public void saveAliasData(Alias alias) {
 		aliasRepository.save(alias);
+	}
+	
+	public void saveDataFeedEmployeeData(DataFeedEmployee alias) {
+		dataFeedEmployeeRepo.save(alias);
 	}
 
 }

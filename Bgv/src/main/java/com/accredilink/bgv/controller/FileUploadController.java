@@ -28,4 +28,9 @@ public class FileUploadController {
 	public ResponseObject uploadAliasNames(@RequestParam("file") MultipartFile file) {
 		return fileUploadService.uploadAliasNamesSheet(file);
 	}
+	
+	@PostMapping("/uploadfeeddata")
+	public ResponseObject uploadFeedData(@RequestParam("file") MultipartFile file) {
+		return fileUploadService.uploadFeedData(file);
+	}
 }

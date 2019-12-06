@@ -1,13 +1,16 @@
 package com.accredilink.bgv.component;
 
 import java.io.IOException;
+import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.poi.hssf.usermodel.HSSFDateUtil;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -18,6 +21,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accredilink.bgv.entity.Address;
 import com.accredilink.bgv.entity.Alias;
+import com.accredilink.bgv.entity.DataFeedEmployee;
 import com.accredilink.bgv.entity.Discipline;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.exception.AccredLinkAppException;
@@ -27,6 +31,7 @@ public class ExcelMapper {
 
 	@Autowired
 	DisciplineDataLoading disciplineDataLoading;
+	static List<DataFeedEmployee> dataFeedEmployee = new ArrayList<DataFeedEmployee>();
 
 	public List<?> mapToObject(MultipartFile file, Class<?> classType) {
 
@@ -34,6 +39,8 @@ public class ExcelMapper {
 			return loadEmployeeData(file);
 		} else if (classType == Alias.class) {
 			return verifyAliasName(file);
+		} else if (classType == DataFeedEmployee.class) {
+			return dataFeedEmployee(file);
 		}
 		return null;
 	}
@@ -68,7 +75,7 @@ public class ExcelMapper {
 					if (row.getCell(1) != null) {
 						employee.setMiddleName(row.getCell(1).getStringCellValue());
 					}
-					
+
 					employee.setLastName(row.getCell(2).getStringCellValue());
 					if (row.getCell(3) != null) {
 						employee.setMaidenName(row.getCell(3).getStringCellValue());
@@ -166,6 +173,80 @@ public class ExcelMapper {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/*
+	 * Loading dataFeed Employee sheet to DataFeedEmployee Object
+	 */
+	private List<?> dataFeedEmployee(MultipartFile file) {
+		try {
+			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
+			XSSFSheet sheet = workbook.getSheetAt(0);
+			List<String> titles = new ArrayList<>();
+			for (int i = 0; i < sheet.getLastRowNum(); i++) {
+				Row row = sheet.getRow(i);
+				DataFeedEmployee b = new DataFeedEmployee();
+				for (int j = 0; j < 8; j++) {
+					Cell cell = row.getCell(j);
+					if (i == 0) {
+						titles.add(cell.getStringCellValue());
+					}
+					if (cell != null) {
+						switch (cell.getCellType()) {
+						case Cell.CELL_TYPE_NUMERIC:
+
+							if (HSSFDateUtil.isCellDateFormatted(cell)) {
+								setResponseData(titles.get(j), null, 0,
+										convertToLocalDateViaSqlDate(cell.getDateCellValue()), b);
+							} else {
+								setResponseData(titles.get(j), null, (int) cell.getNumericCellValue(), null, b);
+							}
+							break;
+						case Cell.CELL_TYPE_STRING:
+							if (i > 0)
+								setResponseData(titles.get(j), cell.getStringCellValue(), 0, null, b);
+							break;
+						}
+					} else {
+						setResponseData(titles.get(j), null, 0, null, b);
+
+					}
+				}
+
+			}
+
+			if (dataFeedEmployee != null) {
+				for (DataFeedEmployee data : dataFeedEmployee) {
+					disciplineDataLoading.saveDataFeedEmployeeData(data);
+				}
+			}
+			System.out.println("Employee...." + dataFeedEmployee.toString());
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return dataFeedEmployee;
+	}
+
+	public static void setResponseData(String key, String response, int numeric, LocalDate date, DataFeedEmployee b) {
+		System.out.println("Verifying the key is...." + key);
+		if (key.equalsIgnoreCase("DOB")) {
+			b.setDob(date);
+		} else if (key.equalsIgnoreCase("LASTNAME")) {
+			System.out.println("Verifying the response is...." + response);
+			b.setLastName(response);
+		} else if (key.equalsIgnoreCase("FIRSTNAME")) {
+			b.setFirstName(response);
+		} else if (key.equalsIgnoreCase("MIDNAME")) {
+			b.setMiddleName(response);
+		}
+		if (b.getFirstName() == null)
+			dataFeedEmployee.add(b);
+
+	}
+
+	public LocalDate convertToLocalDateViaSqlDate(Date dateToConvert) {
+		return new java.sql.Date(dateToConvert.getTime()).toLocalDate();
 	}
 
 	private static String removeLastChar(String str) {

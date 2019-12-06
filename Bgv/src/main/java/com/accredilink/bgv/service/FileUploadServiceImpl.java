@@ -10,6 +10,7 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accredilink.bgv.component.ExcelMapper;
 import com.accredilink.bgv.entity.Alias;
+import com.accredilink.bgv.entity.DataFeedEmployee;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.repository.EmployeeRepository;
 import com.accredilink.bgv.util.ResponseObject;
@@ -51,5 +52,20 @@ public class FileUploadServiceImpl implements FileUploadService {
 		} else {
 			return ResponseObject.constructResponse("Error Occured while saving the alias names ", 0);
 		}
+	}
+
+	@Override
+	public ResponseObject uploadFeedData(MultipartFile file) {
+		if (file.isEmpty()) {
+			return ResponseObject.constructResponse("uploadFeedData", 0);
+		}
+		List<String> success = (List<String>) excelMapper.mapToObject(file, DataFeedEmployee.class);
+
+		if (success != null) {
+			return ResponseObject.constructResponse("Successfully alias names are updated", 1);
+		} else {
+			return ResponseObject.constructResponse("Error Occured while saving the alias names ", 0);
+		}
+
 	}
 }

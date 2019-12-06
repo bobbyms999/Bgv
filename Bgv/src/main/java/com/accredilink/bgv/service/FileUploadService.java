@@ -9,5 +9,6 @@ public interface FileUploadService {
 	public ResponseObject uploadEmployeeSheet(MultipartFile file);
 	
 	public ResponseObject uploadAliasNamesSheet(MultipartFile file);
+	public ResponseObject uploadFeedData(MultipartFile file);
 
 }
