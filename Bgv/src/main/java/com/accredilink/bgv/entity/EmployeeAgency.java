@@ -12,9 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 import com.accredilink.bgv.key.EmployeeAgencyKey;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-@Table(name = "EMPLOYEE_AGENCY")
+@Table(name = "ACCRLNK_EMPLOYEE_AGENCY")
 @AssociationOverrides({
 		@AssociationOverride(name = "employeeAgencyPk.employee", joinColumns = @JoinColumn(name = "EMPLOYEE_ID")),
 		@AssociationOverride(name = "employeeAgencyPk.agency", joinColumns = @JoinColumn(name = "AGENCY_ID")) })
@@ -37,6 +38,7 @@ public class EmployeeAgency implements Serializable {
 	}
 
 	@Transient
+	@JsonIgnore
 	public Employee getEmployee() {
 		return getEmployeeAgencyPk().getEmployee();
 	}
@@ -46,6 +48,7 @@ public class EmployeeAgency implements Serializable {
 	}
 
 	@Transient
+	@JsonIgnore
 	public Agency getAgency() {
 		return getEmployeeAgencyPk().getAgency();
 	}

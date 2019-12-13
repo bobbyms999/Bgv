@@ -12,7 +12,6 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
@@ -22,6 +21,8 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "ACCRLNK_EMPLOYEE")
@@ -44,7 +45,7 @@ public class Employee implements Serializable {
 	@Column(name = "EMAIL_ID")
 	private String emailId;
 
-	@Column(name = "SSN_NUMBER", length = 15)
+	@Column(name = "SSN_NUMBER", length = 11)
 	private String ssnNumber;
 
 	private Discipline discipline;
@@ -146,6 +147,7 @@ public class Employee implements Serializable {
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.employee", cascade = CascadeType.ALL)
+	@JsonIgnore
 	public Set<EmployeeAgency> getEmployeeAgency() {
 		return employeeAgency;
 	}

@@ -19,6 +19,7 @@ import com.accredilink.bgv.repository.EmployeeRepository;
 import com.accredilink.bgv.util.Constants;
 import com.accredilink.bgv.util.EmailValidator;
 import com.accredilink.bgv.util.ResponseObject;
+import com.accredilink.bgv.util.SSNValidator;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -52,6 +53,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 				}
 			}
 			employee.setCreatedBy(employee.getFirstName());
+			employee.setSsnNumber(SSNValidator.validate(employee.getSsnNumber()));
 			employee.setActive("S");
 			EmployeeAgency newEmployeeAgency = new EmployeeAgency();
 			if (employeeAgency.getAgency() != null) {
@@ -103,6 +105,26 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Override
 	public List<Employee> getAllEmployees() {
 		return employeeRepository.findAll();
+	}
+
+	@Override
+	public ResponseObject update(Employee employee) {
+		Optional<Employee> savedEmployee;
+		try {
+			savedEmployee = employeeRepository.findById(employee.getEmployeeId());
+			if (savedEmployee.isPresent()) {
+				employee.setActive("S");
+				employeeRepository.save(employee);
+				return ResponseObject.constructResponse("Employee Updated Successfully", 1);
+			} else {
+				return ResponseObject.constructResponse("Unable to update the Employee", 0);
+			}
+		} catch (Exception e) {
+			logger.error("Employee details not available ", e);
+			e.printStackTrace();
+			throw new AccredLinkAppException("Employee details not available");
+		}
+
 	}
 
 }

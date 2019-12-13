@@ -47,7 +47,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 		}
 		List<String> success = (List<String>) excelMapper.mapToObject(file, Alias.class);
 
-		if (success != null) {
+		if (!(success.isEmpty())) {
 			return ResponseObject.constructResponse("Successfully alias names are updated", 1);
 		} else {
 			return ResponseObject.constructResponse("Error Occured while saving the alias names ", 0);
@@ -61,10 +61,10 @@ public class FileUploadServiceImpl implements FileUploadService {
 		}
 		List<String> success = (List<String>) excelMapper.mapToObject(file, DataFeedEmployee.class);
 
-		if (success != null) {
-			return ResponseObject.constructResponse("Successfully alias names are updated", 1);
+		if (!(success.isEmpty())) {
+			return ResponseObject.constructResponse("Successfully Data Feed names are Stored", 1);
 		} else {
-			return ResponseObject.constructResponse("Error Occured while saving the alias names ", 0);
+			return ResponseObject.constructResponse("Error Occured while saving the feed ", 0);
 		}
 
 	}

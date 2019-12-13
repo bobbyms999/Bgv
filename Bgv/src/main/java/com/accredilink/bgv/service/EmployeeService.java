@@ -13,5 +13,7 @@ public interface EmployeeService {
 	public ResponseObject delete(int employeeId);
 
 	public List<Employee> getAllEmployees();
+	
+	public ResponseObject update(Employee employee);
 
 }

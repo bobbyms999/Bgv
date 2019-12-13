@@ -21,6 +21,8 @@ import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "ACCRLNK_AGENCY")
 @EntityListeners(AuditingEntityListener.class)
@@ -121,6 +123,7 @@ public class Agency implements Serializable{
 	}
 
 	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.agency", cascade=CascadeType.ALL)
+	@JsonIgnore
 	public Set<EmployeeAgency> getEmployeeAgency() {
 		return employeeAgency;
 	}

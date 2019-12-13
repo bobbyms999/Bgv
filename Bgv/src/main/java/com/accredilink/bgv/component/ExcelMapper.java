@@ -21,10 +21,12 @@ import org.springframework.web.multipart.MultipartFile;
 
 import com.accredilink.bgv.entity.Address;
 import com.accredilink.bgv.entity.Alias;
+import com.accredilink.bgv.entity.BgDataBase;
 import com.accredilink.bgv.entity.DataFeedEmployee;
 import com.accredilink.bgv.entity.Discipline;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.exception.AccredLinkAppException;
+import com.accredilink.bgv.util.SSNValidator;
 
 @Component
 public class ExcelMapper {
@@ -80,7 +82,7 @@ public class ExcelMapper {
 					if (row.getCell(3) != null) {
 						employee.setMaidenName(row.getCell(3).getStringCellValue());
 					}
-					employee.setSsnNumber(row.getCell(9).getStringCellValue());
+					employee.setSsnNumber(SSNValidator.validate(row.getCell(9).getStringCellValue()));
 					employee.setDateOfBirth((row.getCell(10).getDateCellValue().toInstant()
 							.atZone(ZoneId.systemDefault()).toLocalDate()));
 					employee.setActive("S");
@@ -186,6 +188,12 @@ public class ExcelMapper {
 			for (int i = 0; i < sheet.getLastRowNum(); i++) {
 				Row row = sheet.getRow(i);
 				DataFeedEmployee b = new DataFeedEmployee();
+				BgDataBase bgDateBase = new BgDataBase();
+				if (file.getOriginalFilename().equalsIgnoreCase("NationalOigFeed.xlsx")) {
+					bgDateBase.setBgDataBaseId(1);
+					bgDateBase.setBgDataBaseName("National OIG");
+					b.setBgDateBase(bgDateBase);
+				}
 				for (int j = 0; j < 8; j++) {
 					Cell cell = row.getCell(j);
 					if (i == 0) {
@@ -220,20 +228,16 @@ public class ExcelMapper {
 					disciplineDataLoading.saveDataFeedEmployeeData(data);
 				}
 			}
-			System.out.println("Employee...." + dataFeedEmployee.toString());
-
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return dataFeedEmployee;
 	}
 
-	public static void setResponseData(String key, String response, int numeric, LocalDate date, DataFeedEmployee b) {
-		System.out.println("Verifying the key is...." + key);
+	public static void setResponseData(String key, String response, int numeric, LocalDate dateOfBirth, DataFeedEmployee b) {
 		if (key.equalsIgnoreCase("DOB")) {
-			b.setDob(date);
+			b.setDateOfBirth(dateOfBirth);
 		} else if (key.equalsIgnoreCase("LASTNAME")) {
-			System.out.println("Verifying the response is...." + response);
 			b.setLastName(response);
 		} else if (key.equalsIgnoreCase("FIRSTNAME")) {
 			b.setFirstName(response);

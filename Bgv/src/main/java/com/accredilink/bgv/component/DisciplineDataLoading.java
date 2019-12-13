@@ -1,10 +1,8 @@
 package com.accredilink.bgv.component;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 
 import javax.annotation.PostConstruct;
 
@@ -14,7 +12,6 @@ import org.springframework.stereotype.Component;
 import com.accredilink.bgv.entity.Alias;
 import com.accredilink.bgv.entity.DataFeedEmployee;
 import com.accredilink.bgv.entity.Discipline;
-import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.repository.AliasRepository;
 import com.accredilink.bgv.repository.DataFeedEmployeeRepo;
 import com.accredilink.bgv.repository.DisciplineRepository;
@@ -62,8 +59,7 @@ public class DisciplineDataLoading {
 		aliasRepository.save(alias);
 	}
 	
-	public void saveDataFeedEmployeeData(DataFeedEmployee alias) {
-		dataFeedEmployeeRepo.save(alias);
+	public void saveDataFeedEmployeeData(DataFeedEmployee dataFeedEmployee) {
+		dataFeedEmployeeRepo.save(dataFeedEmployee);
 	}
-
 }
