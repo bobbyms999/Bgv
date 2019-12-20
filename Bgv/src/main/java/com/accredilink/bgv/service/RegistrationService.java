@@ -1,7 +1,6 @@
 package com.accredilink.bgv.service;
 
 import com.accredilink.bgv.entity.User;
-import com.accredilink.bgv.pojo.Login;
 import com.accredilink.bgv.util.ResponseObject;
 
 public interface RegistrationService {

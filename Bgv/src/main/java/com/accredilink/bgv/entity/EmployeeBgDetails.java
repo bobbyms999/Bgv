@@ -2,15 +2,11 @@ package com.accredilink.bgv.entity;
 
 import java.sql.Blob;
 import java.time.LocalDate;
-import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.EmbeddedId;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.springframework.data.annotation.CreatedBy;
@@ -18,109 +14,76 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedBy;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import com.accredilink.bgv.key.EmployeeBgDetailsKey;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name = "ACCRLNK_EMPLOYEE_BG_DETAILS")
 public class EmployeeBgDetails {
 
-	private Employee employee;
-	private Agency agency;
-	
-	
-	
-	private Date bgDateTime;
-	
-	private BgDataBase bgDateBase;
-	
-	@Column(name = "bg_result")
-	private String bgResult;
-	
-	@Column(name = "bg_result_desc")
-	private String bgResultDesc;
-	
-	@Column(name = "bg_result_proof")
-	private Blob bgResultProof;
+	private EmployeeBgDetailsKey employeeBgDetailsKey;
+
+	@Column(name = "bgresult")
+	private String bgresult;
+
+	@Column(name = "bgresultdesc")
+	private String bgresultdesc;
+
+	@Lob
+	@Column(name = "bgresultproof", columnDefinition = "BLOB")
+	@JsonIgnore
+	private Blob bgresultproof;
 
 	@CreatedDate
-	@Column(name = "CREATED_DATE")
+	@Column(name = "CREATEDDATE")
 	private LocalDate createdDate;
 
 	@LastModifiedDate
-	@Column(name = "MODIFIED_DATE")
+	@Column(name = "MODIFIEDDATE")
 	private LocalDate modifiedDate;
 
 	@CreatedBy
-	@Column(name = "CREATED_BY")
+	@Column(name = "CREATEDBY")
 	private String createdBy;
 
 	@LastModifiedBy
-	@Column(name = "MODIFIED_BY")
+	@Column(name = "MODIFIEDBY")
 	private String modifiedBy;
 
 	@Column(name = "ACTIVE")
-	private String active;
+	private boolean active;
 
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, targetEntity = Employee.class)
-	@JoinColumn(name = "EMPLOYEE_ID")
-	public Employee getEmployee() {
-		return employee;
+	@EmbeddedId
+	public EmployeeBgDetailsKey getEmployeeBgDetailsPk() {
+		return employeeBgDetailsKey;
 	}
 
-	public void setEmployee(Employee employee) {
-		this.employee = employee;
+	public void setEmployeeBgDetailsPk(EmployeeBgDetailsKey employeeBgDetailsKey) {
+		this.employeeBgDetailsKey = employeeBgDetailsKey;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, targetEntity = Agency.class)
-	@JoinColumn(name = "AGENCY_ID")
-	public Agency getAgency() {
-		return agency;
+	public String getBgresult() {
+		return bgresult;
 	}
 
-	public void setAgency(Agency agency) {
-		this.agency = agency;
+	public void setBgresult(String bgresult) {
+		this.bgresult = bgresult;
 	}
 
-	@Id
-	@Column(name = "bg_date_time")
-	public Date getBgDateTime() {
-		return bgDateTime;
+	public String getBgresultdesc() {
+		return bgresultdesc;
 	}
 
-	public void setBgDateTime(Date bgDateTime) {
-		this.bgDateTime = bgDateTime;
+	public void setBgresultdesc(String bgresultdesc) {
+		this.bgresultdesc = bgresultdesc;
 	}
 
-	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, targetEntity = BgDataBase.class)
-	@JoinColumn(name="BG_DB_ID")
-	public BgDataBase getBgDateBase() {
-		return bgDateBase;
+	public Blob getBgresultproof() {
+		return bgresultproof;
 	}
 
-	public void setBgDateBase(BgDataBase bgDateBase) {
-		this.bgDateBase = bgDateBase;
-	}
-
-	public String getBgResult() {
-		return bgResult;
-	}
-
-	public void setBgResult(String bgResult) {
-		this.bgResult = bgResult;
-	}
-
-	public String getBgResultDesc() {
-		return bgResultDesc;
-	}
-
-	public void setBgResultDesc(String bgResultDesc) {
-		this.bgResultDesc = bgResultDesc;
-	}
-
-	public Blob getBgResultProof() {
-		return bgResultProof;
-	}
-
-	public void setBgResultProof(Blob bgResultProof) {
-		this.bgResultProof = bgResultProof;
+	public void setBgresultproof(Blob bgresultproof) {
+		this.bgresultproof = bgresultproof;
 	}
 
 	public LocalDate getCreatedDate() {
@@ -155,11 +118,11 @@ public class EmployeeBgDetails {
 		this.modifiedBy = modifiedBy;
 	}
 
-	public String getActive() {
+	public boolean getActive() {
 		return active;
 	}
 
-	public void setActive(String active) {
+	public void setActive(boolean active) {
 		this.active = active;
 	}
 

@@ -8,9 +8,9 @@ import com.accredilink.bgv.entity.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
 	
-	Optional<User> findByEmailIdOrUserName(String emailId,String userName);
+	public Optional<User> findByEmailIdOrUserName(String emailId,String userName);
 	
-	Optional<User> findByEmailId(String emailId);
+	public Optional<User> findByEmailId(String emailId);
 	
-	Optional<User> findByEmailIdAndTokenNumer(String emailId,String tokenNumer);
+	public Optional<User> findByEmailIdAndTokenNumer(String emailId,String tokenNumer);
 }

@@ -16,10 +16,13 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 @Entity
-@Table(name = "ACCRLNK_BG_DATEBASE")
+@Table(name = "ACCRLNK_BG_DATABASE")
 @EntityListeners(AuditingEntityListener.class)
 public class BgDataBase {
 
+	@Id
+	@GeneratedValue
+	@Column(name = "BG_DB_ID", nullable = false)
 	private int bgDbId;
 
 	@Column(name = "BG_DB_NAME")
@@ -41,9 +44,7 @@ public class BgDataBase {
 	@Column(name = "MODIFIED_BY")
 	private String modifiedBy;
 
-	@Id
-	@GeneratedValue
-	@Column(name = "BG_DB_ID", nullable = false)
+	
 	public int getBgDataBaseId() {
 		return bgDbId;
 	}

@@ -27,21 +27,29 @@ public class FileUploadServiceImpl implements FileUploadService {
 	@Override
 	@Transactional
 	public ResponseObject uploadEmployeeSheet(MultipartFile file) {
-
+		int uniqueRecords = excelMapper.uniqueRecords;
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("File is Empty Please upload the file again", 0);
 		}
 		List<Employee> employees = (List<Employee>) excelMapper.mapToObject(file, Employee.class);
-
-		List<Employee> savedEmployees = employeeRepository.saveAll(employees);
-		if (!(savedEmployees.isEmpty())) {
-			return ResponseObject.constructResponse("File stored successfully", 1);
+		if (!(employees.isEmpty()) && excelMapper.uniqueRecords >= 1) {
+			excelMapper.uniqueRecords = 0;
+			return ResponseObject.constructResponse("Duplicates Are Found Only Unique Records Uploaded", 1);
+		}
+		if (employees.isEmpty() && excelMapper.uniqueRecords >= 1) {
+			excelMapper.uniqueRecords = 0;
+			return ResponseObject.constructResponse("No New Records Found To Upload", 1);
+		}
+		if (!(employees.isEmpty())) {
+			return ResponseObject.constructResponse("Records Uploaded Successfully", 1);
 		}
 		return ResponseObject.constructResponse("Unable to store the File", 0);
+
 	}
 
 	@Override
 	public ResponseObject uploadAliasNamesSheet(MultipartFile file) {
+		int uniqueRecords = 0;
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("uploadAliasNamesSheet", 0);
 		}
@@ -56,16 +64,13 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 	@Override
 	public ResponseObject uploadFeedData(MultipartFile file) {
+		int uniqueRecords = 0;
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("uploadFeedData", 0);
 		}
 		List<String> success = (List<String>) excelMapper.mapToObject(file, DataFeedEmployee.class);
 
-		if (!(success.isEmpty())) {
-			return ResponseObject.constructResponse("Successfully Data Feed names are Stored", 1);
-		} else {
-			return ResponseObject.constructResponse("Error Occured while saving the feed ", 0);
-		}
+		return ResponseObject.constructResponse("Successfully Data Feed names are Stored", 1);
 
 	}
 }

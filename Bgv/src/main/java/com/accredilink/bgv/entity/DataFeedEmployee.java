@@ -23,9 +23,10 @@ import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 @Table(name = "ACCRLNK_DATA_FEED_EMPLOYEE")
 @EntityListeners(AuditingEntityListener.class)
 public class DataFeedEmployee {
-
-	private int feedEmpId;
-
+	
+	
+	private int feed_emp_id;
+	
 	@Column(name = "FIRST_NAME", length = 15)
 	private String firstName;
 
@@ -34,19 +35,19 @@ public class DataFeedEmployee {
 
 	@Column(name = "MIDDLE_NAME", length = 15)
 	private String middleName;
-
+	
 	@Column(name = "EMAIL_ID")
 	private String emailId;
 
 	@Column(name = "SSN")
 	private int ssn;
-
-	@CreatedDate
+	
 	@Column(name = "DOB")
-	private LocalDate dateOfBirth;
-
+	private LocalDate dob;
+	
+	
 	private BgDataBase bgDateBase;
-
+	
 	@CreatedDate
 	@Column(name = "CREATED_DATE")
 	private LocalDate createdDate;
@@ -62,19 +63,19 @@ public class DataFeedEmployee {
 	@LastModifiedBy
 	@Column(name = "MODIFIED_BY")
 	private String modifiedBy;
-
+	
 	@Column(name = "ACTIVE")
 	private String active;
 
 	@Id
 	@GeneratedValue
 	@Column(name = "FEED_EMP_ID")
-	public int getFeedEmpId() {
-		return feedEmpId;
+	public int getFeed_emp_id() {
+		return feed_emp_id;
 	}
 
-	public void setFeedEmpId(int feedEmpId) {
-		this.feedEmpId = feedEmpId;
+	public void setFeed_emp_id(int feed_emp_id) {
+		this.feed_emp_id = feed_emp_id;
 	}
 
 	public String getFirstName() {
@@ -117,12 +118,12 @@ public class DataFeedEmployee {
 		this.ssn = ssn;
 	}
 
-	public LocalDate getDateOfBirth() {
-		return dateOfBirth;
+	public LocalDate getDob() {
+		return dob;
 	}
 
-	public void setDateOfBirth(LocalDate dateOfBirth) {
-		this.dateOfBirth = dateOfBirth;
+	public void setDob(LocalDate dob) {
+		this.dob = dob;
 	}
 
 	public LocalDate getCreatedDate() {
@@ -164,9 +165,9 @@ public class DataFeedEmployee {
 	public void setActive(String active) {
 		this.active = active;
 	}
-
-	@OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = BgDataBase.class)
-	@JoinColumn(name = "BG_DB_ID")
+	
+	@OneToOne(fetch = FetchType.LAZY,cascade = CascadeType.ALL, targetEntity = BgDataBase.class)
+	@JoinColumn(name="BG_DB_ID")
 	public BgDataBase getBgDateBase() {
 		return bgDateBase;
 	}
@@ -177,10 +178,12 @@ public class DataFeedEmployee {
 
 	@Override
 	public String toString() {
-		return "DataFeedEmployee [feed_emp_id=" + feedEmpId + ", firstName=" + firstName + ", lastName=" + lastName
-				+ ", middleName=" + middleName + ", emailId=" + emailId + ", ssn=" + ssn + ", dob=" + dateOfBirth
+		return "DataFeedEmployee [feed_emp_id=" + feed_emp_id + ", firstName=" + firstName + ", lastName=" + lastName
+				+ ", middleName=" + middleName + ", emailId=" + emailId + ", ssn=" + ssn + ", dob=" + dob
 				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", createdBy=" + createdBy
 				+ ", modifiedBy=" + modifiedBy + ", active=" + active + "]";
 	}
-
+	
+	
+	
 }

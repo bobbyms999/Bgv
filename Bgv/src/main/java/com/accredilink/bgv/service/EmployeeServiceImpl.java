@@ -41,39 +41,47 @@ public class EmployeeServiceImpl implements EmployeeService {
 
 		try {
 			Employee employee = employeeAgency.getEmployee();
-			Agency agency;
 
-			/*
-			 * Checking email id is valid or not, if it is invalid then throwing exception.
-			 */
-			if (employee.getEmailId() != null) {
-				boolean isValid = EmailValidator.isValid(employee.getEmailId());
-				if (!isValid) {
-					throw new AccredLinkAppException(constants.INVALID_EMAIL);
+			Employee existingEmployee = employeeRepository.findByFirstNameAndLastNameAndSsnNumber(
+					employee.getFirstName(), employee.getLastName(), SSNValidator.validate(employee.getSsnNumber()));
+			
+			if (existingEmployee == null) {
+				Agency agency;
+
+				/*
+				 * Checking email id is valid or not, if it is invalid then throwing exception.
+				 */
+				if (employee.getEmailId() != null) {
+					boolean isValid = EmailValidator.isValid(employee.getEmailId());
+					if (!isValid) {
+						throw new AccredLinkAppException(constants.INVALID_EMAIL);
+					}
 				}
-			}
-			employee.setCreatedBy(employee.getFirstName());
-			employee.setSsnNumber(SSNValidator.validate(employee.getSsnNumber()));
-			employee.setActive("S");
-			EmployeeAgency newEmployeeAgency = new EmployeeAgency();
-			if (employeeAgency.getAgency() != null) {
-				agency = employeeAgency.getAgency();
-				Optional<Agency> existingAgency = agencyRepository.findByAgencyName(agency.getAgencyName());
-				if (existingAgency.isPresent()) {
-					newEmployeeAgency.setAgency(existingAgency.get());
+				employee.setCreatedBy(employee.getFirstName());
+				employee.setSsnNumber(SSNValidator.validate(employee.getSsnNumber()));
+				employee.setActive("S");
+				EmployeeAgency newEmployeeAgency = new EmployeeAgency();
+				if (employeeAgency.getAgency() != null) {
+					agency = employeeAgency.getAgency();
+					Optional<Agency> existingAgency = agencyRepository.findByAgencyName(agency.getAgencyName());
+					if (existingAgency.isPresent()) {
+						newEmployeeAgency.setAgency(existingAgency.get());
+					} else {
+						agencyRepository.save(agency);
+						newEmployeeAgency.setAgency(agency);
+					}
+					newEmployeeAgency.setEmployee(employee);
+					newEmployeeAgency.setBgStatus(employeeAgency.getBgStatus());
+					employee.addEmployeeAgency(newEmployeeAgency);
 				} else {
-					agencyRepository.save(agency);
-					newEmployeeAgency.setAgency(agency);
+					employee.addEmployeeAgency(null);
 				}
-				newEmployeeAgency.setEmployee(employee);
-				newEmployeeAgency.setBgStatus(employeeAgency.getBgStatus());
-				employee.addEmployeeAgency(newEmployeeAgency);
+				employee = employeeRepository.save(employee);
+				if (employee != null) {
+					return ResponseObject.constructResponse(constants.EMPLOYEE_CREATE_SUCCESS, 1);
+				}
 			} else {
-				employee.addEmployeeAgency(null);
-			}
-			employee = employeeRepository.save(employee);
-			if (employee != null) {
-				return ResponseObject.constructResponse(constants.EMPLOYEE_CREATE_SUCCESS, 1);
+				return ResponseObject.constructResponse("Employee Already Exists", 0);
 			}
 		} catch (Exception e) {
 			logger.error("Exception raised while creating employee ", e);

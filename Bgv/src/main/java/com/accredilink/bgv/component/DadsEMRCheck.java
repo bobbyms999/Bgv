@@ -10,13 +10,13 @@ import org.openqa.selenium.WebElement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.accredilink.bgv.entity.Employee;
+import com.accredilink.bgv.entity.EmployeeAgency;
 import com.accredilink.bgv.entity.EmployeeBgDetails;
 import com.accredilink.bgv.exception.AccredLinkAppException;
 import com.accredilink.bgv.util.ScreenShot;
 
 @Component
-public class DadsEMRCheck {
+public class DadsEMRCheck{
 
 	private static final String URL = "https://emr.dads.state.tx.us/DadsEMRWeb/emrRegistrySearch.jsp";
 
@@ -26,20 +26,30 @@ public class DadsEMRCheck {
 	@Autowired
 	private EmployeeBgDetailsBuilder builder;
 
-	public EmployeeBgDetails check(Employee employee) {
-		EmployeeBgDetails bgDetails=null;
+	public EmployeeBgDetails check(EmployeeAgency employeeAgency) {
+		EmployeeBgDetails bgDetails = null;
 		driver.get(URL);
-		driver.findElement(By.id("socialSecurityNumber0")).sendKeys(employee.getSsnNumber());
+		driver.findElement(By.id("socialSecurityNumber0")).sendKeys(employeeAgency.getEmployee().getSsnNumber());
 		String cssSelectorOfButton = "input[type='submit']";
 		List<WebElement> loginButton = driver.findElements(By.cssSelector(cssSelectorOfButton));
 		loginButton.get(1).click();
 		try {
 			if (driver.getPageSource().contains("No Results Found")) {
-				File image = ScreenShot.takescreenshot(driver,"dads ssnotmatch");
-				bgDetails=builder.build(image, employee, "No Results Found");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				File image = ScreenShot.takescreenshot(driver);
+				bgDetails = builder.build(image, employeeAgency, "No Records Found From DAD'S EMR", 3,"No Records Found In DAD'S EMR");
 			} else {
-				File image = ScreenShot.takescreenshot(driver,"ssn");
-				bgDetails=builder.build(image, employee, "SSN Number Matched");
+				try {
+					Thread.sleep(3000);
+				} catch (InterruptedException e) {
+					e.printStackTrace();
+				}
+				File image = ScreenShot.takescreenshot(driver);
+				bgDetails = builder.build(image, employeeAgency, "SSN Number Matched", 3,"Records Found In DAD'S EMR");
 			}
 		} catch (NoSuchElementException e) {
 			e.printStackTrace();
@@ -49,4 +59,5 @@ public class DadsEMRCheck {
 		}
 		return bgDetails;
 	}
+
 }

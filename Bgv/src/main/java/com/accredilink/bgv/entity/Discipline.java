@@ -103,9 +103,6 @@ public class Discipline {
 		this.active = active;
 	}
 
-	
-	
-	
 	@Override
 	public int hashCode() {
 		final int prime = 31;
@@ -168,5 +165,4 @@ public class Discipline {
 				+ modifiedBy + ", active=" + active + "]";
 	}
 
-	
 }

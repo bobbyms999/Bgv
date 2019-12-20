@@ -1,6 +1,8 @@
 package com.accredilink.bgv.entity;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.util.Date;
 
 import javax.persistence.AssociationOverride;
 import javax.persistence.AssociationOverrides;
@@ -23,6 +25,7 @@ public class EmployeeAgency implements Serializable {
 
 	private EmployeeAgencyKey employeeAgencyPk = new EmployeeAgencyKey();
 	private String bgStatus;
+	private Date bgvDate;
 
 	@EmbeddedId
 	public EmployeeAgencyKey getEmployeeAgencyPk() {
@@ -60,6 +63,15 @@ public class EmployeeAgency implements Serializable {
 	@Column(name = "BG_STATUS", length = 15)
 	public void setBgStatus(String bgStatus) {
 		this.bgStatus = bgStatus;
+	}
+	
+
+	public Date getBgvDate() {
+		return bgvDate;
+	}
+
+	public void setBgvDate(Date bgvDate) {
+		this.bgvDate = bgvDate;
 	}
 
 	@Override

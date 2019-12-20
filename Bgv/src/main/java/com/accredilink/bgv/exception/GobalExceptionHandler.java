@@ -28,7 +28,7 @@ public class GobalExceptionHandler extends ResponseEntityExceptionHandler {
 	public ResponseEntity<ErrorResponse> handleException(Exception ex) {
 		
 		ErrorResponse errorResponse = new ErrorResponse();
-		errorResponse.setMessage("Internal Server Error");
+		errorResponse.setMessage("Internal Server Error Unable To Process The Request");
 		errorResponse.setTimeStamp(LocalDateTime.now());
 		errorResponse.setStatusCode(HttpStatus.EXPECTATION_FAILED.value());
 		
