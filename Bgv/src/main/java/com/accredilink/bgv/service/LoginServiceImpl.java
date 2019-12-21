@@ -1,5 +1,7 @@
 package com.accredilink.bgv.service;
 
+import java.sql.Blob;
+import java.sql.SQLException;
 import java.util.Optional;
 
 import org.slf4j.Logger;
@@ -7,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.accredilink.bgv.entity.Agency;
 import com.accredilink.bgv.entity.User;
 import com.accredilink.bgv.exception.AccredLinkAppException;
 import com.accredilink.bgv.pojo.Login;
@@ -29,15 +32,27 @@ public class LoginServiceImpl implements LoginService {
 	private Constants constants;
 
 	private static final Logger logger = LoggerFactory.getLogger(RegistrationServiceImpl.class);
-	
+
 	@Override
 	public ResponseObject login(Login login) {
 		Optional<User> optionalRegistration = userRepository.findByEmailIdOrUserName(login.getEmailId(),
 				login.getEmailId());
+		Agency agency=null;
 		if (optionalRegistration.isPresent()) {
 			if (PasswordEncrAndDecrUtil.check(login.getPassword(), optionalRegistration.get().getPassword())) {
+				agency=optionalRegistration.get().getAgency();
+				Blob image = agency.getAgencyImage();
+				String agencyImage = null;
+				if (image!=null) {
+					try {
+						byte[] imageArray = image.getBytes(1, (int) image.length());
+						agencyImage = new String(imageArray);
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+				}
 				return ResponseObject.constructResponse(constants.LOGIN_SUCESS, 1,
-						TokenGeneratorUtil.generateNewToken());
+						TokenGeneratorUtil.generateNewToken(),agency.getAgencyId(),agency.getAgencyName(),agencyImage);
 			} else {
 				throw new AccredLinkAppException(constants.LOGIN_FAILED);
 			}

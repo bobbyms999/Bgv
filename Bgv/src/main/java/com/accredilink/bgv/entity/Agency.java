@@ -1,6 +1,7 @@
 package com.accredilink.bgv.entity;
 
 import java.io.Serializable;
+import java.sql.Blob;
 import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
@@ -12,8 +13,10 @@ import javax.persistence.EntityListeners;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 import org.springframework.data.annotation.CreatedBy;
 import org.springframework.data.annotation.CreatedDate;
@@ -26,13 +29,19 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Entity
 @Table(name = "ACCRLNK_AGENCY")
 @EntityListeners(AuditingEntityListener.class)
-public class Agency implements Serializable{
+public class Agency implements Serializable {
 
 	private int agencyId;
 	@Column(name = "AGENCY_NAME", length = 15)
 	private String agencyName;
 	@Column(name = "EIN")
 	private Long ein;
+	@Lob
+	@Column(name = "AGENCYIMAGE", columnDefinition = "BLOB")
+	private Blob agencyImage;
+
+	@Transient
+	private String agencyLogo;
 
 	private Set<EmployeeAgency> employeeAgency = new HashSet<EmployeeAgency>();
 
@@ -68,6 +77,18 @@ public class Agency implements Serializable{
 
 	public String getAgencyName() {
 		return agencyName;
+	}
+
+	public Blob getAgencyImage() {
+		return agencyImage;
+	}
+
+	public void setAgencyImage(Blob agencyImage) {
+		this.agencyImage = agencyImage;
+	}
+
+	public void setAgencyLogo(String agencyLogo) {
+		this.agencyLogo = agencyLogo;
 	}
 
 	public void setAgencyName(String agencyName) {
@@ -122,7 +143,11 @@ public class Agency implements Serializable{
 		this.active = active;
 	}
 
-	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.agency", cascade=CascadeType.ALL)
+	public String getAgencyLogo() {
+		return agencyLogo;
+	}
+
+	@OneToMany(fetch = FetchType.LAZY, mappedBy = "employeeAgencyPk.agency", cascade = CascadeType.ALL)
 	@JsonIgnore
 	public Set<EmployeeAgency> getEmployeeAgency() {
 		return employeeAgency;

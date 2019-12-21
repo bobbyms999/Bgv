@@ -2,6 +2,7 @@ package com.accredilink.bgv.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -19,9 +20,9 @@ public class FileUploadController {
 	@Autowired
 	private FileUploadService fileUploadService;
 
-	@PostMapping("/uploademployee")
-	public ResponseObject uploadEmployee(@RequestParam("file") MultipartFile file) {
-		return fileUploadService.uploadEmployeeSheet(file);
+	@PostMapping("/{loggedInUser}/{agencyName}/uploademployee")
+	public ResponseObject uploadEmployee(@PathVariable String loggedInUser,@PathVariable String agencyName,@RequestParam("file") MultipartFile file) {
+		return fileUploadService.uploadEmployeeSheet(file,loggedInUser,agencyName);
 	}
 	
 	@PostMapping("/uploadaliasnames")

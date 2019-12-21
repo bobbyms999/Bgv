@@ -35,9 +35,8 @@ public class BgCheckServiceImpl implements BgCheckService {
 
 	@Autowired
 	private EmployeeBgDetailsRepository employeeBgDetailsRepository;
-	
-	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss aa");
 
+	SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd hh.mm.ss aa");
 
 	@Override
 	@Transactional
@@ -61,6 +60,25 @@ public class BgCheckServiceImpl implements BgCheckService {
 		return ResponseObject.constructResponse("SubmitBG Processed Successfully", 1);
 	}
 
+	@Transactional
+	@Override
+	public ResponseObject submitIndividualEmployeeBg(int employeeId) {
+
+		try {
+			EmployeeAgency employeeAgency = employeeAgencyRepo.findByEmployeeId(employeeId);
+			if (employeeAgency.getBgStatus().equals("NOT_STARTED")) {
+				List<EmployeeBgDetails> bgDetails = null;
+				bgDetails = dataFeedCheck.verifyEmployeeData(employeeAgency);
+				saveOrUpdateEmployeeAgency(bgDetails);
+			} else {
+				return ResponseObject.constructResponse("Employee is Not Avilable To Process", 2);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return ResponseObject.constructResponse("SubmitBG Processed Successfully", 1);
+	}
+
 	public void saveOrUpdateEmployeeAgency(List<EmployeeBgDetails> bgDetails) {
 		boolean store = false;
 		if (bgDetails != null && !bgDetails.isEmpty()) {
@@ -74,20 +92,19 @@ public class BgCheckServiceImpl implements BgCheckService {
 			}
 			EmployeeAgency agency = new EmployeeAgency();
 			try {
-			if (store) {
-				agency.setBgStatus("PASS");
-				agency.setBgvDate(dateFormat.parse(dateFormat.format(new Date())));
+				if (store) {
+					agency.setBgStatus("PASS");
+					agency.setBgvDate(dateFormat.parse(dateFormat.format(new Date())));
 
-			} else {
-				agency.setBgStatus("Failed");
-				agency.setBgvDate(dateFormat.parse(dateFormat.format(new Date())));
+				} else {
+					agency.setBgStatus("Failed");
+					agency.setBgvDate(dateFormat.parse(dateFormat.format(new Date())));
 
-			}
-			agency.setEmployee(bgDetails.get(0).getEmployeeBgDetailsPk().getEmployee());
-			agency.setAgency(bgDetails.get(0).getEmployeeBgDetailsPk().getAgency());
-			employeeAgencyRepo.save(agency);
-			}
-			catch (ParseException e) {
+				}
+				agency.setEmployee(bgDetails.get(0).getEmployeeBgDetailsPk().getEmployee());
+				agency.setAgency(bgDetails.get(0).getEmployeeBgDetailsPk().getAgency());
+				employeeAgencyRepo.save(agency);
+			} catch (ParseException e) {
 				e.printStackTrace();
 			}
 		}
@@ -128,7 +145,7 @@ public class BgCheckServiceImpl implements BgCheckService {
 		for (EmployeeBgDetails employeeBgDetails : bgDetails) {
 			if (employeeBgDetails.getEmployeeBgDetailsPk().getEmployee().getEmployeeId() == employeeId) {
 				Blob blob = employeeBgDetails.getBgresultproof();
-				image=new Image();
+				image = new Image();
 				try {
 					image.setBgDateBaseId(employeeBgDetails.getEmployeeBgDetailsPk().getBgDateBase().getBgDataBaseId());
 					image.setImageData(Base64.getEncoder().encodeToString(blob.getBytes(1, (int) blob.length())));
@@ -142,4 +159,5 @@ public class BgCheckServiceImpl implements BgCheckService {
 		}
 		return images;
 	}
+
 }

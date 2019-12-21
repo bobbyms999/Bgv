@@ -34,7 +34,7 @@ public class User {
 	@Column(name = "SSN_NUMBER", length = 15)
 	private String ssnNumber;
 	@Column(name = "PHONE_NUMBER")
-	private Long phoneNumber;
+	private String phoneNumber;
 	@Column(name = "TYPE", length = 15)
 	private String type;
 	@Column(name = "TOKEN_NUMER")
@@ -110,11 +110,11 @@ public class User {
 		this.ssnNumber = ssnNumber;
 	}
 
-	public Long getPhoneNumber() {
+	public String getPhoneNumber() {
 		return phoneNumber;
 	}
 
-	public void setPhoneNumber(Long phoneNumber) {
+	public void setPhoneNumber(String phoneNumber) {
 		this.phoneNumber = phoneNumber;
 	}
 

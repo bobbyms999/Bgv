@@ -42,7 +42,7 @@ import com.accredilink.bgv.entity.EmployeeAgency;
 import com.accredilink.bgv.exception.AccredLinkAppException;
 import com.accredilink.bgv.repository.AgencyRepository;
 import com.accredilink.bgv.repository.EmployeeRepository;
-import com.accredilink.bgv.util.SSNValidator;
+import com.accredilink.bgv.util.Validator;
 import com.accredilink.bgv.util.StringUtil;
 
 @Component
@@ -61,10 +61,10 @@ public class ExcelMapper {
 
 	static Set<DataFeedEmployee> dataFeedEmployee = new HashSet<DataFeedEmployee>();
 
-	public List<?> mapToObject(MultipartFile file, Class<?> classType) {
+	public List<?> mapToObject(MultipartFile file,String loggedInUser,String agencyName, Class<?> classType) {
 
 		if (classType == Employee.class) {
-			return loadEmployeeData(file);
+			return loadEmployeeData(file,loggedInUser,agencyName);
 		} else if (classType == Alias.class) {
 			return verifyAliasName(file);
 		} else if (classType == DataFeedEmployee.class) {
@@ -76,7 +76,7 @@ public class ExcelMapper {
 	/*
 	 * Loading excel sheet data to employee object
 	 */
-	private List<?> loadEmployeeData(MultipartFile file) {
+	private List<?> loadEmployeeData(MultipartFile file,String loggedInUser,String agencyName) {
 		Map<String, Integer> dataMap = disciplineDataLoading.getData();
 		try {
 			XSSFWorkbook workbook = new XSSFWorkbook(file.getInputStream());
@@ -100,7 +100,7 @@ public class ExcelMapper {
 
 						if (!(StringUtil.isNullOrEmpty(row.getCell(0).getStringCellValue()))) {
 
-							String ssnNumber = SSNValidator.validate(row.getCell(9).getStringCellValue());
+							String ssnNumber = Validator.validateSSN(row.getCell(9).getStringCellValue());
 							Employee existingEmployee = employeeRepository.findByFirstNameAndLastNameAndSsnNumber(
 									row.getCell(0).getStringCellValue(), row.getCell(2).getStringCellValue(),
 									ssnNumber);
@@ -113,11 +113,11 @@ public class ExcelMapper {
 								if (row.getCell(3) != null) {
 									employee.setMaidenName(row.getCell(3).getStringCellValue());
 								}
-								employee.setSsnNumber(SSNValidator.validate(row.getCell(9).getStringCellValue()));
+								employee.setSsnNumber(Validator.validateSSN(row.getCell(9).getStringCellValue()));
 								employee.setDateOfBirth((row.getCell(10).getDateCellValue().toInstant()
 										.atZone(ZoneId.systemDefault()).toLocalDate()));
 								employee.setActive("S");
-								employee.setCreatedBy(row.getCell(0).getStringCellValue());
+								employee.setCreatedBy(loggedInUser);
 								if (row.getCell(4) != null) {
 									employee.setAliasSpecific(row.getCell(4).getStringCellValue());
 								}
@@ -139,11 +139,11 @@ public class ExcelMapper {
 								}
 								EmployeeAgency newEmployeeAgency = new EmployeeAgency();
 								Optional<Agency> existingAgency = agencyRepository
-										.findByAgencyName("Caprock Home Health Services");
+										.findByAgencyName(agencyName);
 								if (existingAgency.isPresent()) {
 									newEmployeeAgency.setAgency(existingAgency.get());
 								} else {
-									newEmployeeAgency.setAgency(null);
+									throw new AccredLinkAppException("Agency Information Not Found");
 								}
 								newEmployeeAgency.setEmployee(employee);
 								newEmployeeAgency.setBgStatus("NOT_STARTED");

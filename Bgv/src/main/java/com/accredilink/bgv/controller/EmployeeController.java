@@ -34,19 +34,18 @@ public class EmployeeController {
 	@Autowired
 	private DisciplineDataLoading disciplineDataLoading;
 
-	@PostMapping("/create")
-	public ResponseObject createEmployee(@RequestBody EmployeeAgency employeeAgency) {
-		return employeeService.create(employeeAgency);
+	@PostMapping("/{loggedInUser}/create")
+	public ResponseObject createEmployee(@RequestBody EmployeeAgency employeeAgency,@PathVariable String loggedInUser) {
+		return employeeService.create(employeeAgency,loggedInUser);
 	}
-
 	@GetMapping("/delete/{employeeId}")
 	public ResponseObject deleteEmployee(@PathVariable int employeeId) {
 		return employeeService.delete(employeeId);
 	}
 
-	@GetMapping("/fetchallemployees")
-	public List<Employee> fetchAllEmployees() {
-		return employeeService.getAllEmployees();
+	@GetMapping("/{loggedInUser}/fetchallemployees")
+	public List<Employee> fetchAllEmployees(@PathVariable String loggedInUser) {
+		return employeeService.getAllEmployees(loggedInUser);
 	}
 
 	@GetMapping("/fetchallagencies")

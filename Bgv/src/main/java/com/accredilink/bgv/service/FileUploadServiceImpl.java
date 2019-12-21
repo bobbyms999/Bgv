@@ -26,12 +26,12 @@ public class FileUploadServiceImpl implements FileUploadService {
 
 	@Override
 	@Transactional
-	public ResponseObject uploadEmployeeSheet(MultipartFile file) {
+	public ResponseObject uploadEmployeeSheet(MultipartFile file,String loggedInUser,String agencyName) {
 		int uniqueRecords = excelMapper.uniqueRecords;
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("File is Empty Please upload the file again", 0);
 		}
-		List<Employee> employees = (List<Employee>) excelMapper.mapToObject(file, Employee.class);
+		List<Employee> employees = (List<Employee>) excelMapper.mapToObject(file,loggedInUser,agencyName, Employee.class);
 		if (!(employees.isEmpty()) && excelMapper.uniqueRecords >= 1) {
 			excelMapper.uniqueRecords = 0;
 			return ResponseObject.constructResponse("Duplicates Are Found Only Unique Records Uploaded", 1);
@@ -53,7 +53,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("uploadAliasNamesSheet", 0);
 		}
-		List<String> success = (List<String>) excelMapper.mapToObject(file, Alias.class);
+		List<String> success = (List<String>) excelMapper.mapToObject(file,"","", Alias.class);
 
 		if (!(success.isEmpty())) {
 			return ResponseObject.constructResponse("Successfully alias names are updated", 1);
@@ -68,7 +68,7 @@ public class FileUploadServiceImpl implements FileUploadService {
 		if (file.isEmpty()) {
 			return ResponseObject.constructResponse("uploadFeedData", 0);
 		}
-		List<String> success = (List<String>) excelMapper.mapToObject(file, DataFeedEmployee.class);
+		List<String> success = (List<String>) excelMapper.mapToObject(file,"","", DataFeedEmployee.class);
 
 		return ResponseObject.constructResponse("Successfully Data Feed names are Stored", 1);
 

@@ -1,5 +1,6 @@
 package com.accredilink.bgv.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,13 +14,15 @@ import org.springframework.stereotype.Service;
 import com.accredilink.bgv.entity.Agency;
 import com.accredilink.bgv.entity.Employee;
 import com.accredilink.bgv.entity.EmployeeAgency;
+import com.accredilink.bgv.entity.User;
 import com.accredilink.bgv.exception.AccredLinkAppException;
 import com.accredilink.bgv.repository.AgencyRepository;
 import com.accredilink.bgv.repository.EmployeeRepository;
+import com.accredilink.bgv.repository.UserRepository;
 import com.accredilink.bgv.util.Constants;
 import com.accredilink.bgv.util.EmailValidator;
 import com.accredilink.bgv.util.ResponseObject;
-import com.accredilink.bgv.util.SSNValidator;
+import com.accredilink.bgv.util.Validator;
 
 @Service
 public class EmployeeServiceImpl implements EmployeeService {
@@ -35,16 +38,19 @@ public class EmployeeServiceImpl implements EmployeeService {
 	@Autowired
 	private AgencyRepository agencyRepository;
 
+	@Autowired
+	private UserRepository userRepository;
+
 	@Override
 	@Transactional
-	public ResponseObject create(EmployeeAgency employeeAgency) {
+	public ResponseObject create(EmployeeAgency employeeAgency, String loggedInUser) {
 
 		try {
 			Employee employee = employeeAgency.getEmployee();
 
 			Employee existingEmployee = employeeRepository.findByFirstNameAndLastNameAndSsnNumber(
-					employee.getFirstName(), employee.getLastName(), SSNValidator.validate(employee.getSsnNumber()));
-			
+					employee.getFirstName(), employee.getLastName(), Validator.validateSSN(employee.getSsnNumber()));
+
 			if (existingEmployee == null) {
 				Agency agency;
 
@@ -57,8 +63,8 @@ public class EmployeeServiceImpl implements EmployeeService {
 						throw new AccredLinkAppException(constants.INVALID_EMAIL);
 					}
 				}
-				employee.setCreatedBy(employee.getFirstName());
-				employee.setSsnNumber(SSNValidator.validate(employee.getSsnNumber()));
+				employee.setCreatedBy(loggedInUser);
+				employee.setSsnNumber(Validator.validateSSN(employee.getSsnNumber()));
 				employee.setActive("S");
 				EmployeeAgency newEmployeeAgency = new EmployeeAgency();
 				if (employeeAgency.getAgency() != null) {
@@ -67,8 +73,7 @@ public class EmployeeServiceImpl implements EmployeeService {
 					if (existingAgency.isPresent()) {
 						newEmployeeAgency.setAgency(existingAgency.get());
 					} else {
-						agencyRepository.save(agency);
-						newEmployeeAgency.setAgency(agency);
+						throw new AccredLinkAppException("Agency Information Not Found");
 					}
 					newEmployeeAgency.setEmployee(employee);
 					newEmployeeAgency.setBgStatus(employeeAgency.getBgStatus());
@@ -111,8 +116,22 @@ public class EmployeeServiceImpl implements EmployeeService {
 	}
 
 	@Override
-	public List<Employee> getAllEmployees() {
-		return employeeRepository.findAll();
+	public List<Employee> getAllEmployees(String loggedInUser) {
+		List<Employee> newEmployees = new ArrayList<Employee>();
+
+		Optional<User> existingUser = userRepository.findByEmailIdOrUserName(loggedInUser, loggedInUser);
+		if (existingUser.isPresent()) {
+			String userName = existingUser.get().getUserName();
+			String emailId = existingUser.get().getEmailId();
+			List<Employee> employees = employeeRepository.findAll();
+
+			for (Employee employee : employees) {
+				if (employee.getCreatedBy().equals(userName) || employee.getCreatedBy().equals(emailId)) {
+					newEmployees.add(employee);
+				}
+			}
+		}
+		return newEmployees;
 	}
 
 	@Override

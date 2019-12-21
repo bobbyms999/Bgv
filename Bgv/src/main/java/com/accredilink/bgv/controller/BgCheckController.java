@@ -26,6 +26,11 @@ public class BgCheckController {
 	public ResponseObject bgSubmit() {
 		return bgCheckService.submitEmployeeBg();
 	}
+	
+	@GetMapping("/bgsubmit/{employeeId}")
+	public ResponseObject bgSubmit(@PathVariable int employeeId) {
+		return bgCheckService.submitIndividualEmployeeBg(employeeId);
+	}
 
 	@GetMapping("/bgverify")
 	public List<BgDetails> bgVerify() {

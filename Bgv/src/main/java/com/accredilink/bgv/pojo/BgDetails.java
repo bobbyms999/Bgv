@@ -1,6 +1,5 @@
 package com.accredilink.bgv.pojo;
 
-import java.time.LocalDate;
 import java.util.Date;
 
 public class BgDetails {
